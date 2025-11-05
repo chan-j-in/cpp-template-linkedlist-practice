@@ -16,6 +16,8 @@ private:
 	friend class CLinkedList;
 	template<typename U>
 	friend class CListIterator;
+	template<typename U>
+	friend class CReverseIterator;
 
 private:
 	T data;
@@ -54,7 +56,43 @@ public:
 	void operator --() {
 		node = node->prev;
 	}
-	T operator *() {
+	const T& operator *() {
+		return node->data;
+	}
+};
+
+template<typename T>
+class CReverseIterator {
+public:
+	CReverseIterator() { }
+	~CReverseIterator() { }
+
+private:
+	template<typename U>
+	friend class CLinkedList;
+
+private:
+	typedef CListNode<T> NODE;
+	typedef CListNode<T>* PNODE;
+
+private:
+	PNODE node;
+
+public:
+	bool operator ==(const CReverseIterator& iter) {
+		return node == iter.node;
+	}
+	bool operator !=(const CReverseIterator& iter) {
+		return node != iter.node;
+	}
+
+	void operator ++() {
+		node = node->prev;
+	}
+	void operator --() {
+		node = node->next;
+	}
+	const T& operator *() {
 		return node->data;
 	}
 };
@@ -92,6 +130,7 @@ private:
 
 public:
 	typedef CListIterator<T> iterator;
+	typedef CReverseIterator<T> riterator;
 
 private:
 	PNODE head;
@@ -136,6 +175,19 @@ public:
 		iter.node = tail;
 		return iter;
 	}
+
+	riterator rbegin() {
+		riterator riter;
+		riter.node = tail->prev;
+		return riter;
+	}
+
+	riterator rend() {
+		riterator riter;
+		riter.node = head;
+		return riter;
+	}
+
 
 	void clear() {
 		PNODE node = head->next;

@@ -8,6 +8,7 @@ int main() {
 	CLinkedList<float> listFloat;
 
 	CLinkedList<int>::iterator iter;
+	CLinkedList<int>::riterator riter;
 
 	for (int i = 0; i < 100; i++) {
 		listInt.push_back(i + 1);
@@ -20,12 +21,8 @@ int main() {
 	}
 
 	cout << "==================" << endl;
-	iter = listInt.end();
-	--iter;
-	while (true) {
-		cout << *iter << endl;
-		if (iter == listInt.begin()) break;
-		--iter;
+	for (riter = listInt.rbegin(); riter != listInt.rend(); ++riter) {
+		cout << *riter << endl;
 	}
 	return 0;
 }
