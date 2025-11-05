@@ -4,16 +4,18 @@ template<typename T>
 class CListNode {
 private :
 	CListNode() :
-		next(NULL),
-		prev(NULL)
+		next(nullptr),
+		prev(nullptr)
 	{
 
 	}
 	~CListNode() { }
 
 private:
-	template<typename T>
+	template<typename U>
 	friend class CLinkedList;
+	template<typename U>
+	friend class CListIterator;
 
 private:
 	T data;
@@ -22,28 +24,78 @@ private:
 };
 
 template<typename T>
-class CLinkedList
-{
+class CListIterator {
 public:
-	CLinkedList() {
-		begin = new NODE;
-		end = new NODE;
+	CListIterator(){ }
+	~CListIterator(){ }
 
-		begin->next = end;
-		end->prev = begin;
-
-		size = 0;
-	}
-
-	~CLinkedList() { }
+private:
+	template<typename U>
+	friend class CLinkedList;
 
 private:
 	typedef CListNode<T> NODE;
 	typedef CListNode<T>* PNODE;
 
 private:
-	PNODE begin;
-	PNODE end;
+	PNODE node;
+
+public:
+	bool operator ==(const CListIterator& iter) {
+		return node == iter.node;
+	}
+	bool operator !=(const CListIterator& iter) {
+		return node != iter.node;
+	}
+
+	void operator ++() {
+		node = node->next;
+	}
+	void operator --() {
+		node = node->prev;
+	}
+	T operator *() {
+		return node->data;
+	}
+};
+
+template<typename T>
+class CLinkedList
+{
+public:
+	CLinkedList() {
+		head = new NODE;
+		tail = new NODE;
+
+		head->next = tail;
+		tail->prev = head;
+
+		size = 0;
+	}
+
+	~CLinkedList() {
+		clear();
+		delete head;
+		delete tail;
+		head = nullptr;
+		tail = nullptr;
+		size = 0;
+	}
+
+private:
+	template<typename U>
+	friend class CLinkedList;
+
+private:
+	typedef CListNode<T> NODE;
+	typedef CListNode<T>* PNODE;
+
+public:
+	typedef CListIterator<T> iterator;
+
+private:
+	PNODE head;
+	PNODE tail;
 	unsigned int size;
 
 public:
@@ -51,11 +103,11 @@ public:
 		PNODE node = new NODE;
 		node->data = data;
 
-		node->prev = end->prev;
-		node->next = end;
+		node->prev = tail->prev;
+		node->next = tail;
 
-		end->prev->next = node;
-		end->prev = node;
+		tail->prev->next = node;
+		tail->prev = node;
 
 		size++;
 	}
@@ -64,25 +116,37 @@ public:
 		PNODE node = new NODE;
 		node->data = data;
 
-		node->prev = begin;
-		node->next = begin->next;
+		node->prev = head;
+		node->next = head->next;
 
-		begin->next->prev = node;
-		begin->next = node;
+		head->next->prev = node;
+		head->next = node;
 
 		size++;
 	}
 
-	void clear() {
-		PNODE node = begin->next;
+	iterator begin() {
+		iterator iter;
+		iter.node = head->next;
+		return iter;
+	}
 
-		while (node != end) {
+	iterator end() {
+		iterator iter;
+		iter.node = tail;
+		return iter;
+	}
+
+	void clear() {
+		PNODE node = head->next;
+
+		while (node != tail) {
 			PNODE temp = node->next;
 			delete node;
 			node = temp;
 		}
-		begin->next = end;
-		end->prev = begin;
+		head->next = tail;
+		tail->prev = head;
 
 		size = 0;
 	}
