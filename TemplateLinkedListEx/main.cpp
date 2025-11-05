@@ -19,6 +19,13 @@ int main() {
 		cout << *iter << endl;
 	}
 
-	
+	cout << "==================" << endl;
+	iter = listInt.end();
+	--iter;
+	while (true) {
+		cout << *iter << endl;
+		if (iter == listInt.begin()) break;
+		--iter;
+	}
 	return 0;
 }
